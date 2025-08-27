@@ -2,9 +2,9 @@
 
 ## Antes de Iniciar
 
-Empezaremos por explicar los diferentes componentes del proyectos y partiremos de los componentes externos, continuando con los componentes core de negocio (dominio) y por ˙ltimo el inicio y configuraciÛn de la aplicaciÛn.
+Empezaremos por explicar los diferentes componentes del proyectos y partiremos de los componentes externos, continuando con los componentes core de negocio (dominio) y por √∫ltimo el inicio y configuraci√≥n de la aplicaci√≥n.
 
-Lee el artÌculo [Clean Architecture ó Aislando los detalles](https://medium.com/bancolombia-tech/clean-architecture-aislando-los-detalles-4f9530f35d7a)
+Lee el art√≠culo [Clean Architecture ‚Äî Aislando los detalles](https://medium.com/bancolombia-tech/clean-architecture-aislando-los-detalles-4f9530f35d7a)
 
 # Arquitectura
 
@@ -12,11 +12,11 @@ Lee el artÌculo [Clean Architecture ó Aislando los detalles](https://medium.com/
 
 ## Domain
 
-Es el mÛdulo m·s interno de la arquitectura, pertenece a la capa del dominio y encapsula la lÛgica y reglas del negocio mediante modelos y entidades del dominio.
+Es el m√≥dulo m√°s interno de la arquitectura, pertenece a la capa del dominio y encapsula la l√≥gica y reglas del negocio mediante modelos y entidades del dominio.
 
 ## Usecases
 
-Este mÛdulo gradle perteneciente a la capa del dominio, implementa los casos de uso del sistema, define lÛgica de aplicaciÛn y reacciona a las invocaciones desde el mÛdulo de entry points, orquestando los flujos hacia el mÛdulo de entities.
+Este m√≥dulo gradle perteneciente a la capa del dominio, implementa los casos de uso del sistema, define l√≥gica de aplicaci√≥n y reacciona a las invocaciones desde el m√≥dulo de entry points, orquestando los flujos hacia el m√≥dulo de entities.
 
 ## Infrastructure
 
@@ -24,9 +24,9 @@ Este mÛdulo gradle perteneciente a la capa del dominio, implementa los casos de 
 
 En el apartado de helpers tendremos utilidades generales para los Driven Adapters y Entry Points.
 
-Estas utilidades no est·n arraigadas a objetos concretos, se realiza el uso de generics para modelar comportamientos
-genÈricos de los diferentes objetos de persistencia que puedan existir, este tipo de implementaciones se realizan
-basadas en el patrÛn de diseÒo [Unit of Work y Repository](https://medium.com/@krzychukosobudzki/repository-design-pattern-bc490b256006)
+Estas utilidades no est√°n arraigadas a objetos concretos, se realiza el uso de generics para modelar comportamientos
+gen√©ricos de los diferentes objetos de persistencia que puedan existir, este tipo de implementaciones se realizan
+basadas en el patr√≥n de dise√±o [Unit of Work y Repository](https://medium.com/@krzychukosobudzki/repository-design-pattern-bc490b256006)
 
 Estas clases no puede existir solas y debe heredarse su compartimiento en los **Driven Adapters**
 
@@ -38,10 +38,23 @@ interactuar.
 
 ### Entry Points
 
-Los entry points representan los puntos de entrada de la aplicaciÛn o el inicio de los flujos de negocio.
+Los entry points representan los puntos de entrada de la aplicaci√≥n o el inicio de los flujos de negocio.
 
 ## Application
 
-Este mÛdulo es el m·s externo de la arquitectura, es el encargado de ensamblar los distintos mÛdulos, resolver las dependencias y crear los beans de los casos de use (UseCases) de forma autom·tica, inyectando en Èstos instancias concretas de las dependencias declaradas. Adem·s inicia la aplicaciÛn (es el ˙nico mÛdulo del proyecto donde encontraremos la funciÛn ìpublic static void main(String[] args)î.
+Este m√≥dulo es el m√°s externo de la arquitectura, es el encargado de ensamblar los distintos m√≥dulos, resolver las dependencias y crear los beans de los casos de use (UseCases) de forma autom√°tica, inyectando en √©stos instancias concretas de las dependencias declaradas. Adem√°s inicia la aplicaci√≥n (es el √∫nico m√≥dulo del proyecto donde encontraremos la funci√≥n ‚Äúpublic static void main(String[] args)‚Äù.
 
 **Los beans de los casos de uso se disponibilizan automaticamente gracias a un '@ComponentScan' ubicado en esta capa.**
+
+# Historia de Usuario
+<img width="1474" height="457" alt="image" src="https://github.com/user-attachments/assets/0148a5b4-3c5b-4db2-bcce-8ded1aa06027" />
+
+# Flujo
+<img width="1331" height="692" alt="image" src="https://github.com/user-attachments/assets/f7a627a0-9802-47b4-9acf-a9cf6ad86dc1" />
+
+# BD Relacional
+<img width="824" height="754" alt="image" src="https://github.com/user-attachments/assets/427cd35f-01db-4b28-a024-8543933ca236" />
+
+<img width="823" height="439" alt="image" src="https://github.com/user-attachments/assets/cda9e6e0-e43f-4d72-aefa-637780237268" />
+
+
