@@ -1,5 +1,5 @@
 server:
-  port: 8080
+  port: ${SERVER_PORT:8080}
 
 springdoc:
   api-docs:
@@ -20,11 +20,11 @@ spring:
     active: dev
 adapters:
   r2dbc:
-    host: "localhost"
-    port: 3306
-    database: "crediya_authentication"
-    username: "root"
-    password: "mysql"
+    host: ${ADAPTERS_R2DBC_HOST:localhost}
+    port: ${ADAPTERS_R2DBC_PORT:3306}
+    database: ${ADAPTERS_R2DBC_DATABASE:crediya_authentication}
+    username: ${ADAPTERS_R2DBC_USERNAME:root}
+    password: ${ADAPTERS_R2DBC_PASSWORD:mysql}
 management:
   endpoints:
     web:

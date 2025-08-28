@@ -57,4 +57,50 @@ Este módulo es el más externo de la arquitectura, es el encargado de ensamblar
 
 <img width="823" height="439" alt="image" src="https://github.com/user-attachments/assets/cda9e6e0-e43f-4d72-aefa-637780237268" />
 
+# build jar
 
+```bash
+# Option A (from repo root):
+./gradlew clean :applications:app-service:bootJar
+
+# Option B (from the module directory):
+(cd applications/app-service && ../../gradlew clean bootJar)
+```
+
+# copy jar (version-agnostic)
+
+```bash
+# Simple glob (picks any SNAPSHOT jar under build/libs)
+cp applications/app-service/build/libs/*-SNAPSHOT.jar deployment/crediya-authentication.jar
+
+# Safer: pick the newest jar found under build/libs
+JAR_PATH=$(ls -1t applications/app-service/build/libs/*.jar 2>/dev/null | head -n1) && \
+  [ -n "$JAR_PATH" ] && cp "$JAR_PATH" deployment/crediya-authentication.jar || \
+  (echo "No jar found in applications/app-service/build/libs. Did the build succeed?" && exit 1)
+```
+
+# build docker and compose
+
+```bash
+cd deployment
+docker compose up --build -d
+```
+
+# shut down docker compose
+
+```bash
+docker compose down -v
+```
+
+# One-liner (Unix/macOS): build, package jar to deployment/, and start stack
+
+```bash
+./gradlew clean :applications:app-service:bootJar && \
+  cp applications/app-service/build/libs/*-SNAPSHOT.jar deployment/crediya-authentication.jar && \
+  cd deployment && docker compose up --build -d
+```
+
+Notes:
+- If you changed the artifact version, the glob handles it automatically. If you use a release version (no -SNAPSHOT), the "Safer" variant will still pick it.
+- To view logs after starting in detached mode: `cd deployment && docker compose logs -f app`
+- To rebuild after code changes: re-run the gradle bootJar + copy, then `cd deployment && docker compose up --build -d`. 
