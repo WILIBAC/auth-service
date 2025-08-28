@@ -1,0 +1,48 @@
+meta {
+  name: Create User
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{baseUrl}}/api/v1/usuarios
+  body: json
+  auth: inherit
+}
+
+headers {
+  Content-Type: application/json
+  Accept: application/json
+}
+
+body:json {
+  {
+    "name": "John",
+    "lastName": "Doe",
+    "birthDate": "1990-01-15",
+    "address": "742 Evergreen Terrace",
+    "phoneNumber": "+1-555-0000",
+    "email": "john.doe@example.com",
+    "baseSalary": 1200000,
+    "identityDocument": "ID-123456"
+  }
+}
+
+script:post-response {
+  test('Status is 200', function () {
+    expect(res.getStatus()).to.equal(200);
+  });
+  try {
+    var data = res.getBody();
+    if (data && data.userId) {
+      bru.setVar('userId', data.userId);
+      console.log('Stored userId =', data.userId);
+    }
+  } catch (e) {
+    console.warn('Response is not JSON or missing userId');
+  }
+}
+
+settings {
+  encodeUrl: true
+}

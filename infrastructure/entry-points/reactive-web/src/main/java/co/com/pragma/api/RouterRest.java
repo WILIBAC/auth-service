@@ -16,6 +16,7 @@ import org.springframework.web.reactive.function.server.RouterFunction;
 import org.springframework.web.reactive.function.server.ServerResponse;
 
 import static org.springframework.web.reactive.function.server.RequestPredicates.POST;
+import static org.springframework.web.reactive.function.server.RequestPredicates.GET;
 import static org.springframework.web.reactive.function.server.RequestPredicates.accept;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
@@ -33,7 +34,7 @@ public class RouterRest {
                     path = "/api/v1/usuarios",
                     method = RequestMethod.POST,
                     beanClass = Handler.class,
-                    beanMethod = "registerUser",
+                    beanMethod = "save",
                     operation = @Operation(
                             operationId = "createUser",
                             summary = "Registrar usuario",
@@ -43,10 +44,39 @@ public class RouterRest {
                                     @ApiResponse(responseCode = "400", description = "Error de validación")
                             }
                     )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios/{id}",
+                    method = RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "getById",
+                    operation = @Operation(
+                            operationId = "getUserById",
+                            summary = "Obtener usuario por id",
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "Usuario encontrado"),
+                                    @ApiResponse(responseCode = "404", description = "Usuario no encontrado")
+                            }
+                    )
+            ),
+            @RouterOperation(
+                    path = "/api/v1/usuarios",
+                    method = RequestMethod.GET,
+                    beanClass = Handler.class,
+                    beanMethod = "list",
+                    operation = @Operation(
+                            operationId = "listUsers",
+                            summary = "Listar usuarios (usar fields=ids para solo IDs)",
+                            responses = {
+                                    @ApiResponse(responseCode = "200", description = "Listado de usuarios")
+                            }
+                    )
             )
     })
     public RouterFunction<ServerResponse> routes(Handler handler) {
         return org.springframework.web.reactive.function.server.RouterFunctions
-                .route(POST("/api/v1/usuarios").and(accept(APPLICATION_JSON)), handler::save);
+                .route(POST("/api/v1/usuarios").and(accept(APPLICATION_JSON)), handler::save)
+                .andRoute(GET("/api/v1/usuarios/{id}").and(accept(APPLICATION_JSON)), handler::getById)
+                .andRoute(GET("/api/v1/usuarios").and(accept(APPLICATION_JSON)), handler::list);
     }
 }

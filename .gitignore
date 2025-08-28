@@ -334,3 +334,14 @@ gradle-app.setting
 # -----
 *.hprof
 build-cache
+
+# Common IDE folders
+.idea
+.vscode
+
+# === Gradle ===
+.gradle/
+build/
+build-cache/
+out/
+*.log

@@ -1,12 +1,16 @@
 package co.com.pragma.api;
 
-import org.assertj.core.api.Assertions;
+import co.com.pragma.model.user.User;
+import co.com.pragma.usecase.user.UserUseCase;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.reactive.WebFluxTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.web.reactive.server.WebTestClient;
+import reactor.core.publisher.Mono;
 
 @ContextConfiguration(classes = {RouterRest.class, Handler.class})
 @WebFluxTest
@@ -15,46 +19,43 @@ class RouterRestTest {
     @Autowired
     private WebTestClient webTestClient;
 
+    @MockBean
+    private UserUseCase userUseCase;
+
     @Test
-    void testListenGETUseCase() {
+    void testGetUserById_NotFound() {
+        Mockito.when(userUseCase.getById("123")).thenReturn(Mono.empty());
+
         webTestClient.get()
-                .uri("/api/usecase/path")
+                .uri("/api/v1/usuarios/{id}", "123")
                 .accept(MediaType.APPLICATION_JSON)
                 .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
+                .expectStatus().isNotFound();
     }
 
     @Test
-    void testListenGETOtherUseCase() {
-        webTestClient.get()
-                .uri("/api/otherusercase/path")
-                .accept(MediaType.APPLICATION_JSON)
-                .exchange()
-                .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
-    }
+    void testCreateUser_Success() {
+        User input = User.builder()
+                .name("John")
+                .lastName("Doe")
+                .email("john.doe@example.com")
+                .build();
+        User created = input.toBuilder().userId("u-1").build();
 
-    @Test
-    void testListenPOSTUseCase() {
+        Mockito.when(userUseCase.createUser(Mockito.any(User.class))).thenReturn(Mono.just(created));
+
         webTestClient.post()
-                .uri("/api/usecase/otherpath")
+                .uri("/api/v1/usuarios")
+                .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .bodyValue("")
+                .bodyValue("{" +
+                        "\"name\":\"John\"," +
+                        "\"lastName\":\"Doe\"," +
+                        "\"email\":\"john.doe@example.com\"}")
                 .exchange()
                 .expectStatus().isOk()
-                .expectBody(String.class)
-                .value(userResponse -> {
-                            Assertions.assertThat(userResponse).isEmpty();
-                        }
-                );
+                .expectBody()
+                .jsonPath("$.userId").isEqualTo("u-1")
+                .jsonPath("$.name").isEqualTo("John");
     }
 }
