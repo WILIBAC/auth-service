@@ -1,0 +1,125 @@
+{
+  "info": {
+    "_postman_id": "c6b3c1c1-4e8a-4f44-bc3d-9f7b364a7b01",
+    "name": "Crediya Authentication",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Postman collection for Crediya Authentication service (WebFlux). Includes user creation and retrieval endpoints."
+  },
+  "item": [
+    {
+      "name": "Local Dev",
+      "item": [
+        {
+          "name": "Create User",
+          "request": {
+            "method": "POST",
+            "header": [
+              { "key": "Content-Type", "value": "application/json" },
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios"]
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthDate\": \"1990-01-15\",\n  \"address\": \"742 Evergreen Terrace\",\n  \"phoneNumber\": \"+1-555-0000\",\n  \"email\": \"john.doe@example.com\",\n  \"baseSalary\": 1200000,\n  \"identityDocument\": \"ID-123456\"\n}"
+            }
+          },
+          "response": [
+            {
+              "name": "200 - Created (example response)",
+              "originalRequest": {
+                "method": "POST",
+                "url": "{{baseUrl}}/api/v1/usuarios"
+              },
+              "status": "OK",
+              "code": 200,
+              "header": [ {"key": "Content-Type", "value": "application/json"} ],
+              "body": "{\n  \"userId\": \"u-1\",\n  \"name\": \"John\",\n  \"lastName\": \"Doe\",\n  \"birthDate\": \"1990-01-15\",\n  \"address\": \"742 Evergreen Terrace\",\n  \"phoneNumber\": \"+1-555-0000\",\n  \"email\": \"john.doe@example.com\",\n  \"baseSalary\": 1200000,\n  \"identityDocument\": \"ID-123456\",\n  \"role\": null\n}"
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200', function () {",
+                  "  pm.response.to.have.status(200);",
+                  "});",
+                  "try {",
+                  "  var data = pm.response.json();",
+                  "  if (data && data.userId) {",
+                  "    pm.collectionVariables.set('userId', data.userId);",
+                  "    console.log('Stored userId =', data.userId);",
+                  "  }",
+                  "} catch (e) {",
+                  "  console.warn('Response is not JSON or missing userId');",
+                  "}"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get User by Id",
+          "request": {
+            "method": "GET",
+            "header": [
+              { "key": "Accept", "value": "application/json" }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/v1/usuarios/{{userId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "v1", "usuarios", "{{userId}}"]
+            }
+          },
+          "response": [
+            {
+              "name": "200 - Found (example)",
+              "originalRequest": {"method": "GET", "url": "{{baseUrl}}/api/v1/usuarios/{{userId}}"},
+              "status": "OK",
+              "code": 200,
+              "header": [ {"key": "Content-Type", "value": "application/json"} ],
+              "body": "{\n  \"userId\": \"u-1\",\n  \"name\": \"John\",\n  \"lastName\": \"Doe\",\n  \"email\": \"john.doe@example.com\"\n}"
+            },
+            {
+              "name": "404 - Not Found (example)",
+              "originalRequest": {"method": "GET", "url": "{{baseUrl}}/api/v1/usuarios/{{userId}}"},
+              "status": "Not Found",
+              "code": 404,
+              "body": ""
+            }
+          ],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status is 200 or 404', function () {",
+                  "  pm.expect([200,404]).to.include(pm.response.code);",
+                  "});"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:8080"
+    },
+    {
+      "key": "userId",
+      "value": "u-1",
+      "type": "string",
+      "description": "Will be set automatically by Create User test if response contains userId"
+    }
+  ]
+}

@@ -1,0 +1,43 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: crediya_authentication
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppass
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -u$$MYSQL_USER -p$$MYSQL_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./db:/docker-entrypoint-initdb.d:ro
+
+
+  app:
+    platform: linux/amd64
+    image: crediya-auth:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      JAVA_OPTS: "-XX:MaxRAMPercentage=70 -Djava.security.egd=file:/dev/./urandom"
+      DEBUG_ERRORS: "true"
+      ADAPTERS_R2DBC_HOST: db
+      ADAPTERS_R2DBC_PORT: "3306"
+      ADAPTERS_R2DBC_DATABASE: crediya_authentication
+      ADAPTERS_R2DBC_USERNAME: appuser
+      ADAPTERS_R2DBC_PASSWORD: apppass
+      SERVER_PORT: "8080"
+    ports:
+      - "8080:8080"
+
+volumes:
+  db_data:
